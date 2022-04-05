@@ -1,18 +1,24 @@
 http://127.0.0.1:8000/products
 
 ###
-http://127.0.0.1:8000/products?search=first
+http://127.0.0.1:8000/products?search=need
+
+###
+http://127.0.0.1:8000/products?order_by=생성일
+
+###
+http://127.0.0.1:8000/products?order_by=총펀딩금액
 
 ###
 POST  http://127.0.0.1:8000/products/ 
 Content-Type: application/json
 
 {
-    "title": "api make product2",
+    "title": "need punding",
     "publisher_name": "gyujae",
-    "description": "this is my product from api http2",
+    "description": "hello my name is need punding",
     "target_amount": 10000,
-    "funding_end_date": "2022-04-10",
+    "funding_end_date": "2022-04-4",
     "one_time_funding_amount": 500
 }
 
@@ -21,14 +27,14 @@ Content-Type: application/json
 http://127.0.0.1:8000/products/1
 ###
 
-http://127.0.0.1:8000/products/2
+http://127.0.0.1:8000/products/7
 
 ###
 PATCH  http://127.0.0.1:8000/products/2/
 content-type: application/json
 
 {
-    "title": "Update Title"
+    "title": "Hello Title"
 }
 
 ###

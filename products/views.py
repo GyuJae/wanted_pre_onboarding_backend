@@ -13,11 +13,20 @@ def product_list(request):
     """
 
     if request.method == "GET":
-        products = Product.objects.all()
+        if request.query_params.get("search"):
+            keyword = request.query_params.get("search")
+            products = Product.objects.filter(title__contains=keyword)
+        elif request.query_params.get("order_by"):
+            order_keyword = request.query_params.get("order_by")
+            if order_keyword == "생성일":
+                products = Product.objects.all().order_by("-created_at")
+            elif order_keyword == "총펀딩금액":
+                products = Product.objects.all().order_by("-total_amout")
+        else:
+            products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
-        print(request.data)
         serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -36,10 +45,24 @@ def product_detail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
-    elif request.method == "PATCH":
+        data = ProductSerializer(product).data
+        data["achievement_rate"] = data["total_amount"] / data["target_amount"]
 
+        import datetime
+
+        today = datetime.date.today()
+        end_date_split = list(map(int, data["funding_end_date"].split("-")))
+        target_date = datetime.date(
+            end_date_split[0], end_date_split[1], end_date_split[2]
+        )
+        data["d_day"] = (target_date - today).days
+        return Response(data)
+    elif request.method == "PATCH":
+        if "target_amount" in list(request.data.keys()):
+            return Response(
+                {"errors": "Do not edit target amount"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         serializer = ProductSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
