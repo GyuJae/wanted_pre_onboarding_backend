@@ -14,12 +14,12 @@ POST  http://127.0.0.1:8000/products/
 Content-Type: application/json
 
 {
-    "title": "need punding",
-    "publisher_name": "gyujae",
-    "description": "hello my name is need punding",
-    "target_amount": 10000,
-    "funding_end_date": "2022-04-4",
-    "one_time_funding_amount": 500
+    "title": "hello hwi",
+    "publisher_name": "iksu",
+    "description": "name gear asdasdas",
+    "target_amount": 1000,
+    "funding_end_date": "2022-04-20",
+    "one_time_funding_amount": 200,
 }
 
 ###
@@ -27,14 +27,15 @@ Content-Type: application/json
 http://127.0.0.1:8000/products/1
 ###
 
-http://127.0.0.1:8000/products/7
+http://127.0.0.1:8000/products/2
 
 ###
 PATCH  http://127.0.0.1:8000/products/2/
 content-type: application/json
 
 {
-    "title": "Hello Title"
+    "title": "Hello Title",
+    
 }
 
 ###
