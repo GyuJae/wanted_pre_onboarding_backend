@@ -10,6 +10,7 @@ from .serializers import (
     UpdateProductSerializer,
 )
 from .models import Product
+from products import serializers
 
 
 class ProductList(APIView):
@@ -80,3 +81,21 @@ class ProductDetail(APIView):
         product = self.get_object(pk)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProductFunding(APIView):
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            raise Http404
+
+    def patch(self, request, pk, format=None):
+        product = self.get_object(pk=pk)
+        product.participants.add(request.user)
+        product.total_amount += product.one_time_funding_amount
+        product.save()
+        return Response(status=status.HTTP_200_OK)

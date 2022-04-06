@@ -26,10 +26,16 @@ class UpdateProductSerializer(serializers.ModelSerializer):
         ]
 
 
+class FundingProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = ["one_time_funding_amount"]
+
+
 class ProductSerializer(serializers.ModelSerializer):
 
     d_day = serializers.SerializerMethodField()
     achievment_rate = serializers.SerializerMethodField()
+    participants_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -51,4 +57,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return instance.d_day()
 
     def achievment_rate(self, instance):
-        return instance.achie
+        return instance.achievment_rate()
+
+    def participants_count(self, instance):
+        return instance.participants_count()

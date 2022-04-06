@@ -2,6 +2,7 @@ from email.policy import default
 from django.db import models
 from core import models as core_models
 
+
 # Create your models here.
 class Product(core_models.TimeStampedModel):
 
@@ -17,13 +18,16 @@ class Product(core_models.TimeStampedModel):
     funding_end_date = models.DateField()
     one_time_funding_amount = models.IntegerField()
     total_amount = models.IntegerField(default=0)
-    participants_count = models.IntegerField(default=0)
+    participants = models.ManyToManyField("users.User")
 
     def __str__(self):
         return self.title
 
     def publisher_name(self):
         return self.publisher.username
+
+    def participants_count(self):
+        return self.participants.count()
 
     def d_day(self):
 

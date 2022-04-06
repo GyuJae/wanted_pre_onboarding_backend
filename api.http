@@ -29,6 +29,11 @@ Authorization: Basic gyujae:1
 http://127.0.0.1:8000/products/1
 ###
 
+###
+PATCH http://127.0.0.1:8000/products/1/funding/
+content-type: application/json
+Authorization: Basic gyujae:1
+
 http://127.0.0.1:8000/products/2
 
 ###
@@ -40,6 +45,8 @@ Authorization: Basic yusun:1
     "title": "Hello Title"
     
 }
+
+
 
 ###
 DELETE http://127.0.0.1:8000/products/4/
@@ -71,3 +78,4 @@ Content-Type: application/json
 
 ###
 DELETE http://127.0.0.1:8000/users/4/
+
