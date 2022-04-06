@@ -8,7 +8,8 @@ class Product(core_models.TimeStampedModel):
     """Product Model Definition"""
 
     title = models.CharField(max_length=140)
-    publisher_name = models.CharField(max_length=140)
+    publisher = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
     description = models.TextField()
     target_amount = models.IntegerField()
     funding_end_date = models.DateField()
@@ -18,6 +19,9 @@ class Product(core_models.TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    def publisher_name(self):
+        return self.publisher.username
 
     def d_day(self):
 

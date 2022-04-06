@@ -1,3 +1,6 @@
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -10,8 +13,9 @@ from .models import Product
 
 
 @api_view(["GET", "POST"])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticated])
 def product_list(request):
-
     """
     List all code products, or create a new prodcut.
     """
@@ -32,7 +36,9 @@ def product_list(request):
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
     elif request.method == "POST":
-        serializer = CreateProductSerializer(data=request.data)
+        data = request.data
+        data["publisher_id"] = request.user.id
+        serializer = CreateProductSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -50,6 +56,7 @@ def product_detail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
+
         data = ProductSerializer(product).data
         return Response(data)
     elif request.method == "PATCH":

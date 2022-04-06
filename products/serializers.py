@@ -7,7 +7,6 @@ class CreateProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "title",
-            "publisher_name",
             "description",
             "target_amount",
             "funding_end_date",
@@ -20,7 +19,6 @@ class UpdateProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = [
             "title",
-            "publisher_name",
             "description",
             "funding_end_date",
             "one_time_funding_amount",
