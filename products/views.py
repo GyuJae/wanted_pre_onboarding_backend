@@ -33,12 +33,11 @@ class ProductList(APIView):
             products = Product.objects.all()
 
         serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
         data = request.data
         data["publisher"] = request.user.id
-        print(request.user.id)
         serializer = CreateProductSerializer(data=data)
         if serializer.is_valid():
             serializer.save(publisher=request.user)
