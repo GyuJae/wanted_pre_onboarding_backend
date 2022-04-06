@@ -11,6 +11,7 @@ class CreateProductSerializer(serializers.ModelSerializer):
             "target_amount",
             "funding_end_date",
             "one_time_funding_amount",
+            "publisher",
         ]
 
 

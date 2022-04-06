@@ -1,4 +1,3 @@
-from functools import partial
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -35,6 +34,8 @@ class UserDetail(APIView):
 
     def get(self, request, pk, format=None):
         user = self.get_object(pk)
+        products = user.products.all()
+        print(products)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 

@@ -1,8 +1,9 @@
 http://127.0.0.1:8000/products
 Authorization: Basic gyujae:1
 
+
 ###
-http://127.0.0.1:8000/products?search=need
+http://127.0.0.1:8000/products?search=fir
 
 ###
 http://127.0.0.1:8000/products?order_by=생성일
@@ -33,9 +34,10 @@ http://127.0.0.1:8000/products/2
 ###
 PATCH  http://127.0.0.1:8000/products/2/
 content-type: application/json
+Authorization: Basic yusun:1
 
 {
-    "title": "Hello Title",
+    "title": "Hello Title"
     
 }
 
@@ -50,17 +52,17 @@ POST http://127.0.0.1:8000/users/
 Content-Type: application/json
 
 {
-    "username": "gyutae",
+    "username": "yusun",
     "password": "1",
     "email": "rbxo@naver.com"
 }
 
 ###
-http://127.0.0.1:8000/users/2
+http://127.0.0.1:8000/users/5
 
 
 ###
-PATCH http://127.0.0.1:8000/users/2/
+PATCH http://127.0.0.1:8000/users/3/
 Content-Type: application/json
 
 {
@@ -68,4 +70,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://127.0.0.1:8000/users/2/
+DELETE http://127.0.0.1:8000/users/4/

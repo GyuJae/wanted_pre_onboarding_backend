@@ -8,7 +8,9 @@ class Product(core_models.TimeStampedModel):
     """Product Model Definition"""
 
     title = models.CharField(max_length=140)
-    publisher = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    publisher = models.ForeignKey(
+        "users.User", related_name="products", on_delete=models.CASCADE
+    )
 
     description = models.TextField()
     target_amount = models.IntegerField()

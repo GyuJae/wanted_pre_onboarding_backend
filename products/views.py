@@ -1,9 +1,9 @@
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.decorators import authentication_classes, permission_classes
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.decorators import api_view
+from django.http import Http404
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import permissions
+
 from .serializers import (
     ProductSerializer,
     CreateProductSerializer,
@@ -12,15 +12,13 @@ from .serializers import (
 from .models import Product
 
 
-@api_view(["GET", "POST"])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([IsAuthenticated])
-def product_list(request):
-    """
-    List all code products, or create a new prodcut.
-    """
+class ProductList(APIView):
 
-    if request.method == "GET":
+    """List all products, or creat e a new product"""
+
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get(sef, request, format=None):
         if request.query_params.get("search"):
             keyword = request.query_params.get("search")
             products = Product.objects.filter(title__contains=keyword)
@@ -35,36 +33,50 @@ def product_list(request):
 
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
-    elif request.method == "POST":
+
+    def post(self, request, format=None):
         data = request.data
-        data["publisher_id"] = request.user.id
+        data["publisher"] = request.user.id
+        print(request.user.id)
         serializer = CreateProductSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(publisher=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(["GET", "PATCH", "DELETE"])
-def product_detail(request, pk):
+class ProductDetail(APIView):
+
     """
     Retrieve, update or delete a code product.
     """
-    try:
-        product = Product.objects.get(pk=pk)
-    except:
-        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == "GET":
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-        data = ProductSerializer(product).data
-        return Response(data)
-    elif request.method == "PATCH":
+    def get_object(self, pk):
+        try:
+            return Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+
+    def patch(self, request, pk, format=None):
+        product = self.get_object(pk)
+        if product.publisher_name() != request.user.username:
+            return Response(
+                {"details": "not your product"}, status=status.HTTP_401_UNAUTHORIZED
+            )
         serializer = UpdateProductSerializer(product, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    elif request.method == "DELETE":
+
+    def delete(self, request, pk, format=None):
+        product = self.get_object(pk)
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
