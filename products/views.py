@@ -78,6 +78,10 @@ class ProductDetail(APIView):
 
     def delete(self, request, pk, format=None):
         product = self.get_object(pk)
+        if product.publisher_name() != request.user.username:
+            return Response(
+                {"details": "not your product"}, status=status.HTTP_401_UNAUTHORIZED
+            )
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
