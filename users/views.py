@@ -28,6 +28,7 @@ class UserDetail(APIView):
     """User retrieve, update or delete"""
 
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    no_authorization_errors = "No Authorizations"
 
     def get_object(self, pk):
         try:
@@ -37,13 +38,17 @@ class UserDetail(APIView):
 
     def get(self, request, pk, format=None):
         user = self.get_object(pk)
-        products = user.products.all()
-        print(products)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def patch(self, request, pk, format=None):
         user = self.get_object(pk)
+
+        if user != request.user:
+            return Response(
+                {"errors": self.no_authorization_errors},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         serializer = UserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -52,5 +57,10 @@ class UserDetail(APIView):
 
     def delete(self, request, pk, format=None):
         user = self.get_object(pk)
+        if user != request.user:
+            return Response(
+                {"errors": self.no_authorization_errors},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -69,11 +69,12 @@ http://127.0.0.1:8000/users/5
 
 
 ###
-PATCH http://127.0.0.1:8000/users/3/
+PATCH http://127.0.0.1:8000/users/5/
+Authorization: Basic iksu:1
 Content-Type: application/json
 
 {
-    "username": "iksu"
+    "username": "yusun"
 }
 
 ###
