@@ -195,3 +195,50 @@ class TestProductDetail(APITestCase):
 
         self.assertEqual(response.status_code, 204)
         self.assertNotEqual(before_products_count, after_products_count)
+
+
+class TestProductFunding(APITestCase):
+
+    url = "/products/1/funding/"
+
+    def setUp(self) -> None:
+        self.user = User.objects.create(
+            username="test_user", password="1", email="test@test.com"
+        )
+        self.client.force_authenticate(user=self.user)
+        self.product = Product.objects.create(
+            title="test product",
+            description="this is test product",
+            target_amount=1000,
+            funding_end_date="2022-04-20",
+            one_time_funding_amount=200,
+            publisher=self.user,
+        )
+
+    def test_get_object_product(self):
+        response = self.client.patch(self.url)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_object_product_error(self):
+        response = self.client.patch("/product/2/funding/")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_patch_product(self):
+        self.client.force_authenticate(user=self.user)
+
+        before_product = Product.objects.get(pk=1)
+        before_count = before_product.participants_count()
+        self.client.patch(self.url)
+        after_product = Product.objects.get(pk=1)
+
+        self.assertEqual(
+            before_product.total_amount + before_product.one_time_funding_amount,
+            after_product.total_amount,
+        )
+        
+        self.assertEqual(
+            before_count + 1,
+            after_product.participants_count(),
+        )
